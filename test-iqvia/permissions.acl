@@ -1,0 +1,159 @@
+/*
+ * Logic permission
+ */
+
+rule userCanotSee {
+  description: "User canot see any asset that he is not part of"
+  participant(x): "org.example.iqvia.OurUser"
+  operation: ALL
+  resource(y): "org.example.iqvia.moneyRequest"
+  condition: (y.user.getIdentifier() != x.getIdentifier())
+  action: DENY
+}
+
+rule userCanotDo_1 {
+  description: "User canot do to asset money request given from IQVIA admin"
+  participant: "org.example.iqvia.OurUser"
+  operation: CREATE, DELETE, UPDATE
+  resource: "org.example.iqvia.moneyRequest"
+  action: DENY
+}
+
+rule userCanotDo_2 {
+  description: "User canot do to asset payer money given to IQVIA"
+  participant: "org.example.iqvia.OurUser"
+  operation: ALL
+  resource: "org.example.iqvia.payerMoney"
+  action: DENY
+}
+
+rule userCanotDo_3 {
+  description: "User canot do to any participant admin"
+  participant: "org.example.iqvia.OurUser"
+  operation: ALL
+  resource: "org.example.iqvia.AdminUser"
+  action: DENY
+}
+
+rule userCanotDo_4 {
+  description: "User canot do to any participant Payer"
+  participant: "org.example.iqvia.OurUser"
+  operation: ALL
+  resource: "org.example.iqvia.OurPayer"
+  action: DENY
+}
+
+rule userCanotDo_5 {
+  description: "User canot do to any participant User"
+  participant: "org.example.iqvia.OurUser"
+  operation: ALL
+  resource: "org.example.iqvia.OurUser"
+  action: DENY
+}
+
+rule payerCanotDelete {
+  description: "Payer canot do to asset"
+  participant: "org.example.iqvia.OurPayer"
+  operation: CREATE, DELETE, UPDATE
+  resource: "org.example.iqvia.moneyRequest"
+  action: DENY
+}
+
+rule payerCanDelete {
+  description: "Payer canot do to asset payer money that he is a part of"
+  participant(x): "org.example.iqvia.OurPayer"
+  operation: DELETE, UPDATE, READ
+  resource(y): "org.example.iqvia.payerMoney"
+  condition: (y.payer.getIdentifier() == x.getIdentifier())
+  action: ALLOW
+}
+
+rule payerCanDo_1 {
+  description: "Payer can do to anny asset payer money"
+  participant: "org.example.iqvia.OurPayer"
+  operation: CREATE
+  resource: "org.example.iqvia.payerMoney"
+  action: ALLOW
+}
+
+rule payerCanotDo {
+  description: "Payer canot do to asset payer money which he is not part of"
+  participant(x): "org.example.iqvia.OurPayer"
+  operation: DELETE, UPDATE, READ
+  resource(y): "org.example.iqvia.payerMoney"
+  condition: (y.payer.getIdentifier() != x.getIdentifier())
+  action: DENY
+}
+
+rule payerCanotDo_1 {
+  description: "Payer canot do to participant user"
+  participant: "org.example.iqvia.OurPayer"
+  operation: CREATE, DELETE, UPDATE
+  resource: "org.example.iqvia.OurUser"
+  action: DENY
+}
+
+rule payerCanotDo_2 {
+  description: "Payer canot do to participant Admin"
+  participant: "org.example.iqvia.OurPayer"
+  operation: ALL
+  resource: "org.example.iqvia.AdminUser"
+  action: DENY
+}
+
+rule payerCanotDo_3 {
+  description: "Payer canot do to participant Payer"
+  participant: "org.example.iqvia.OurPayer"
+  operation: ALL
+  resource: "org.example.iqvia.OurPayer"
+  action: DENY
+}
+
+rule adminCanotDo {
+  description: "Admin canot do to the asset"
+  participant: "org.example.iqvia.AdminUser"
+  operation: CREATE, UPDATE 
+  resource: "org.example.iqvia.payerMoney"
+  action: DENY
+}
+
+/**
+* Defalt access control file
+*/
+
+rule Default {
+  description: "Allow all access to network admin"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.example.iqvia.*"
+  action: ALLOW
+} 
+
+rule systemRule {
+  description: "Allow all access to network admin"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+} 
+
+/*
+ * Network admin permission file
+ */
+
+rule NetworkAdminUser {
+  description: "Grant network admin user some permission in USER name space"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "**"
+  action: ALLOW 
+}
+
+rule NetworkAdminSystem {
+  description: "Grant network admin user some permission in SYSTEM  name space"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW 
+}
+
