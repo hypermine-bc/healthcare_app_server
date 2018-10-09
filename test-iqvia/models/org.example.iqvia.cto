@@ -34,30 +34,63 @@ concept Address {
   o String zip optional
 }
 
-participant OurUser extends Business {
-  o Double accountBalance
+participant Patient extends Business {
+  //o Double accountBalance
 }
 
-participant AdminUser extends Business {
+participant IQVIA extends Business {
 }
 
-participant OurPayer extends Business {
+participant Charity extends Business {
   o Double transferBalance
 }
 
-asset moneyRequest identified by requestId {
+participant Doctor extends Business {
+}
+
+participant Pharma extends Business {
+}
+
+/*asset patientAssset identified by requestId {
   o String requestId
-  --> OurUser user
-  --> AdminUser netadmin
+  --> Patient patient
+  --> Charity charity
+  o Boolean signature
+  o TransferType transferStatus
+}
+
+asset doctorAsset identified by requestId {
+  o String requestId
+  --> Doctor doctor
+  --> Patient user
+  --> Charity payer
+  o Boolean signature
+  o String comments
+}
+
+asset medicine identified by medicineId {
+  o String medicineId
+  --> Patient user
+  o Double medPrince
+  o String description
+}*/
+
+asset moneyAllotedToUser identified by requestId {
+  o String requestId
+  --> Patient user
+  --> IQVIA netadmin
+  --> Charity payer
+  --> Doctor doctor
   o DateTime requestTime
   o TransferType currentStatus 
+  o Double userAllotedMoney
 }
 
 asset payerMoney identified by payedId {
   o String payedId
-  --> OurPayer payer
-  o Double payerMoney
-  o DateTime requestTime
+  --> Charity payer
+  o Double payerMoneyInitiated
+  //o DateTime requestTime
   o TransferType currentStatus 
 }
 
@@ -69,6 +102,32 @@ enum TransferType {
 }
 
 transaction SampleTransaction {
-  --> moneyRequest asset
+  --> moneyAllotedToUser asset
   o String newValue
+}
+
+transaction AddUserToChain {
+}
+
+transaction AddPayerToChain {
+  o String email
+  o String firstName
+  o String lastName
+  o String password
+  o Address address
+  o Double transferBalance
+}
+
+transaction AllotMoneyToUser {
+  --> moneyAllotedToUser userAsset
+  o Double newValue
+}
+
+transaction AllotMoneyToPayer {
+  --> payerMoney payerAsset
+  o Double newValue
+}
+
+transaction TestTransaction {
+  --> payerMoney payerAsset
 }

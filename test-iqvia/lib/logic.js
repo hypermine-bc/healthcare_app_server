@@ -30,7 +30,7 @@ async function sampleTransaction(tx) {
     tx.asset.value = tx.newValue;
 
     // Get the asset registry for the asset.
-    const assetRegistry = await getAssetRegistry('org.example.iqvia.moneyRequest');
+    const assetRegistry = await getAssetRegistry('org.example.iqvia.moneyAllotedToUser');
     // Update the asset in the asset registry.
     await assetRegistry.update(tx.asset);
 
@@ -40,4 +40,56 @@ async function sampleTransaction(tx) {
     event.oldValue = oldValue;
     event.newValue = tx.newValue;
     emit(event);
+}
+
+const factory = getFactory();
+const NS = 'org.example.iqvia';
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.AddUserToChain} addUserToChain
+ * @transaction
+ */
+
+function addUserToChain(tx) {
+  var participant = NS + '.Patient';
+  var user = factory.newResource(NS, 'Patient', 'someone@email.com');
+  var ConceptAddress = factory.newConcept(NS, 'Address');
+  ConceptAddress.country = 'INDIA';
+  user.address = ConceptAddress;
+  user.firstName = 'SOORAJ';
+  user.lastName = 'NARAYANAN';
+  user.password = 'aezakmi';
+  user.accountBalance = 0;
+  
+  return getParticipantRegistry(participant)
+  	.then(function(userRegistry) {
+    	return userRegistry.addAll([user]);
+  	});
+}
+
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.AddPayerToChain} addPayerToChain
+ * @transaction
+ */
+
+function addPayerToChain(tx) {
+  var participant = NS + '.Charity';
+  var charity = factory.newResource(NS, 'Charity', tx.email);
+  var ConceptAddress = factory.newConcept(NS, 'Address');
+  ConceptAddress.country = tx.address.country;
+  ConceptAddress.city = tx.address.city;
+  ConceptAddress.address = tx.address.address;
+  ConceptAddress.mobile = tx.address.mobile;
+  ConceptAddress.zip = tx.address.zip;
+  charity.address = ConceptAddress;
+  charity.firstName = tx.firstName;
+  charity.lastName = tx.lastName;
+  charity.password = tx.password;
+  charity.transferBalance = tx.transferBalance;
+  
+  return getParticipantRegistry(participant)
+  	.then(function(charityRegistry) {
+    	return charityRegistry.addAll([charity]);
+  	});
 }

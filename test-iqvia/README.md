@@ -1,3 +1,3 @@
-# test-iqvia
+# test-blockchain
 
-IQVIA Healthcare on blockchain network
+Healthcare application on blockchain network
