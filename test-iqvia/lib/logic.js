@@ -30,7 +30,7 @@ async function sampleTransaction(tx) {
     tx.asset.value = tx.newValue;
 
     // Get the asset registry for the asset.
-    const assetRegistry = await getAssetRegistry('org.example.iqvia.moneyAllotedToUser');
+    const assetRegistry = await getAssetRegistry('org.example.iqvia.moneyRequest');
     // Update the asset in the asset registry.
     await assetRegistry.update(tx.asset);
 
@@ -42,54 +42,225 @@ async function sampleTransaction(tx) {
     emit(event);
 }
 
-const factory = getFactory();
-const NS = 'org.example.iqvia';
+
+
 /**
  * Sample transaction to add User to IQVIA Blockchain
- * @param {org.example.iqvia.AddUserToChain} addUserToChain
+ * @param {org.example.iqvia.AddDoctorPrescription} addDoctorPrescription
  * @transaction
  */
 
-function addUserToChain(tx) {
-  var participant = NS + '.Patient';
-  var user = factory.newResource(NS, 'Patient', 'someone@email.com');
-  var ConceptAddress = factory.newConcept(NS, 'Address');
-  ConceptAddress.country = 'INDIA';
-  user.address = ConceptAddress;
-  user.firstName = 'SOORAJ';
-  user.lastName = 'NARAYANAN';
-  user.password = 'aezakmi';
-  user.accountBalance = 0;
+async function addDoctorPrescription(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  var asset = NS + '.DoctorPrescription';
+  var patasset = NS + '.PatientNotification';
+  var doctor = factory.newResource(NS, 'DoctorPrescription', tx.prescriptionId);
+  var patient = factory.newResource(NS, 'PatientNotification', 'PAT_' + tx.prescriptionId);
+  var doctorRelationship = factory.newRelationship(NS, 'Doctor', tx.doctor.email);
+  var userRelationship = factory.newRelationship(NS, 'Patient', tx.user.email);
+  var medRelationship = factory.newRelationship(NS, 'Medicine', tx.medUsed.MedId);
+  patient.medicineUsed = medRelationship;
+  doctor.medicineUsed = medRelationship;
+  patient.doctor = doctorRelationship;
+  patient.user = userRelationship;
+  doctor.doctor = doctorRelationship;
+  doctor.user = userRelationship;
+  doctor.TransferStatus = tx.TransferStatus;
+  patient.TransferStatus = 'INIT';
+  doctor.type = tx.type;
+  patient.type = tx.type;
+  doctor.comments = tx.comments;
+  patient.comments = tx.comments;
+  //doctor.transferBalance = tx.transferBalance;
   
-  return getParticipantRegistry(participant)
-  	.then(function(userRegistry) {
-    	return userRegistry.addAll([user]);
-  	});
+  const docAssetRegistry = await getAssetRegistry(asset);
+  await docAssetRegistry.addAll([doctor]);
+  const patAssetRegistry = await getAssetRegistry(patasset);
+  await patAssetRegistry.addAll([patient]);
+  return 0;
 }
 
 /**
  * Sample transaction to add User to IQVIA Blockchain
- * @param {org.example.iqvia.AddPayerToChain} addPayerToChain
+ * @param {org.example.iqvia.SignPatientPrescription} signPatientPrescription
  * @transaction
  */
 
-function addPayerToChain(tx) {
-  var participant = NS + '.Charity';
-  var charity = factory.newResource(NS, 'Charity', tx.email);
-  var ConceptAddress = factory.newConcept(NS, 'Address');
-  ConceptAddress.country = tx.address.country;
-  ConceptAddress.city = tx.address.city;
-  ConceptAddress.address = tx.address.address;
-  ConceptAddress.mobile = tx.address.mobile;
-  ConceptAddress.zip = tx.address.zip;
-  charity.address = ConceptAddress;
-  charity.firstName = tx.firstName;
-  charity.lastName = tx.lastName;
-  charity.password = tx.password;
-  charity.transferBalance = tx.transferBalance;
+async function signPatientPrescription(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  var patasset = NS + '.PatientNotification';
+  var newPatAsset = tx.patAsset;
+  newPatAsset.TransferStatus = 'IN_PROGRESS';
   
-  return getParticipantRegistry(participant)
-  	.then(function(charityRegistry) {
-    	return charityRegistry.addAll([charity]);
-  	});
+  const patAssetRegistry = await getAssetRegistry(patasset);
+  await patAssetRegistry.update(newPatAsset);
+  return 0;
+}
+
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.SignDoctorPrescription} signDoctorPrescription
+ * @transaction
+ */
+
+async function signDoctorPrescription(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  var patasset = NS + '.PatientNotification';
+  var docasset = NS + '.DoctorPrescription';
+  var iqviaasset = NS + '.IQVIADoctorNotification';
+  var newPatAsset = tx.patAsset;
+  var newDocAsset = tx.docAsset;
+  if(newPatAsset.TransferStatus == 'IN_PROGRESS') {
+    
+  	var iqvia = factory.newResource(NS, 'IQVIADoctorNotification', (newDocAsset.user.firstname + newDocAsset.prescriptionId));
+    var doctorRelationship = factory.newRelationship(NS, 'DoctorPrescription', newDocAsset.prescriptionId);
+    var userRelationship = factory.newRelationship(NS, 'PatientNotification', newPatAsset.prescriptionId);
+  	var medRelationship = factory.newRelationship(NS, 'Medicine', newDocAsset.medicineUsed.MedId);
+    iqvia.medicineUsed = medRelationship;
+    iqvia.patNoti = userRelationship;
+    iqvia.docPresc = doctorRelationship;
+    iqvia.TransferStatus = 'INIT';
+    iqvia.type = newDocAsset.type;
+    iqvia.comments = newDocAsset.comments;
+    
+    const iqviaAssetRegistry = await getAssetRegistry(iqviaasset);
+    await iqviaAssetRegistry.addAll([iqvia]);
+    
+  	newDocAsset.TransferStatus = 'IN_PROGRESS';
+
+    const docAssetRegistry = await getAssetRegistry(docasset);
+    await docAssetRegistry.update(newDocAsset);
+    return 0;
+  }
+}
+
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.SignIqviaPrescription} signIqviaPrescription
+ * @transaction
+ */
+
+async function signIqviaPrescription(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  var payerAsset = NS + '.PayerNotification';
+  var txIqviaAsset = tx.iqviaDocAsset;
+
+  var payer = factory.newResource(NS, 'PayerNotification', ('REQ_'+ txIqviaAsset.prescriptionId));
+  var userPrescRelationship = factory.newRelationship(NS, 'IQVIADoctorNotification', txIqviaAsset.prescriptionId);
+  payer.userDetail = userPrescRelationship;
+  payer.reqMoney = tx.moneyPatientWanted;
+  payer.recvMoney = 0;
+  payer.comments = txIqviaAsset.comments;
+
+  const payerAssetRegistry = await getAssetRegistry(payerAsset);
+  await payerAssetRegistry.addAll([payer]);
+  
+  txIqviaAsset.TransferStatus = 'IN_PROGRESS';
+  
+  const iqviaDocAssetRegistry =  await getAssetRegistry(NS + '.IQVIADoctorNotification');
+  await iqviaDocAssetRegistry.update(txIqviaAsset);
+  return 0;
+}
+
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.SignIqviaPrescription} signIqviaPrescription
+ * @transaction
+ */
+
+/*async function signIqviaPrescription(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  var payerAsset = NS + '.PayerNotification';
+  var txIqviaAsset = tx.iqviaDocAsset;
+
+  var payer = factory.newResource(NS, 'PayerNotification', ('REQ_'+ txIqviaAsset.prescriptionId));
+  var userPrescRelationship = factory.newRelationship(NS, 'IQVIADoctorNotification', txIqviaAsset.prescriptionId);
+  payer.userDetail = userPrescRelationship;
+  payer.reqMoney = tx.moneyPatientWanted;
+  payer.recvMoney = 0;
+  payer.comments = txIqviaAsset.comments;
+
+  const payerAssetRegistry = await getAssetRegistry(payerAsset);
+  await payerAssetRegistry.addAll([payer]);
+  return 0;
+}*/
+
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.DonateMoneyFromPharma} donateMoneyFromPharma
+ * @transaction
+ */
+
+async function donateMoneyFromPharma(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  var iqviaAsset = NS + '.IQVIAPharmaNotification';
+  var txIqviaAsset = tx;
+
+  var payerDonate = factory.newResource(NS, 'IQVIAPharmaNotification', 'DON_PHA_'+ txIqviaAsset.pharmaMoney.notificationId);
+  var userPrescRelationship = factory.newRelationship(NS, 'IQVIADoctorNotification', txIqviaAsset.pharmaMoney.userDetail.prescriptionId);
+  var pharmaRelationship = factory.newRelationship(NS, 'Pharma', txIqviaAsset.pharma.email);
+  payerDonate.userDetail = userPrescRelationship;
+  payerDonate.pharma = pharmaRelationship;
+  payerDonate.investedMoney = tx.moneyDonation;
+
+  const payerAssetRegistry = await getAssetRegistry(iqviaAsset);
+  await payerAssetRegistry.addAll([payerDonate]);
+  return 0;
+}
+
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.DonateMoneyFromCharity} donateMoneyFromCharity
+ * @transaction
+ */
+
+async function donateMoneyFromCharity(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  var iqviaAsset = NS + '.IQVIACharityNotification';
+  var txIqviaAsset = tx;
+
+  var payerDonate = factory.newResource(NS, 'IQVIACharityNotification', 'DON_CHA_'+ txIqviaAsset.charityMoney.notificationId);
+  var userPrescRelationship = factory.newRelationship(NS, 'IQVIADoctorNotification', txIqviaAsset.charityMoney.userDetail.prescriptionId);
+  var charityRelationship = factory.newRelationship(NS, 'Charity', txIqviaAsset.charity.email);
+  payerDonate.userDetail = userPrescRelationship;
+  payerDonate.charity = charityRelationship;
+  payerDonate.investedMoney = tx.moneyDonation;
+
+  const payerAssetRegistry = await getAssetRegistry(iqviaAsset);
+  await payerAssetRegistry.addAll([payerDonate]);
+  return 0;
+}
+
+/**
+ * Sample transaction to add User to IQVIA Blockchain
+ * @param {org.example.iqvia.ConfirmMoneyFromCharity} confirmMoneyFromCharity
+ * @transaction
+ */
+
+async function confirmMoneyFromCharity(tx) {
+  var factory = getFactory();
+  var NS = 'org.example.iqvia';
+  
+  var payerAsset = NS + '.PayerNotification';
+  var charityDonateAsset = NS + '.IQVIACharityNotification';
+  
+  var newCharityMoney = tx.charityMoney;
+  var newCharityNoti = tx.charityNoti;
+  
+  newCharityMoney.recvMoney = newCharityNoti.investedMoney;
+  if(newCharityMoney.recvMoney == newCharityMoney.reqMoney) {
+    console.log('100% consenses acquired');
+    newCharityMoney.userDetail.docPresc.TransferStatus = 'SUCCESS';
+    newCharityMoney.userDetail.patNoti.TransferStatus = 'SUCCESS';
+    newCharityMoney.userDetail.TransferStatus = 'SUCCESS';
+    newCharityMoney.userDetail.patNoti.user.accountBalance = newCharityMoney.reqMoney;
+  }
+  return 0;
 }

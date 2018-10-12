@@ -35,14 +35,10 @@ concept Address {
 }
 
 participant Patient extends Business {
-  //o Double accountBalance
+  o Double accountBalance
 }
 
 participant IQVIA extends Business {
-}
-
-participant Charity extends Business {
-  o Double transferBalance
 }
 
 participant Doctor extends Business {
@@ -51,47 +47,78 @@ participant Doctor extends Business {
 participant Pharma extends Business {
 }
 
-/*asset patientAssset identified by requestId {
-  o String requestId
-  --> Patient patient
-  --> Charity charity
-  o Boolean signature
-  o TransferType transferStatus
+participant Charity extends Business {
+  o Double transferBalance
 }
 
-asset doctorAsset identified by requestId {
-  o String requestId
-  --> Doctor doctor
+asset Medicine identified by MedId {
+  o String MedId
+  --> Pharma pharma
+  o String MedName
+  o String MedDescription
+  o Double MedPrice
+}
+
+abstract asset Prescription identified by prescriptionId {
+  o String prescriptionId
+  --> Medicine medicineUsed
+  o TransferType TransferStatus
+  o DeceseType type
+  o String comments
+  //o DateTime transferTime
+}
+
+asset DoctorPrescription extends Prescription {
   --> Patient user
-  --> Charity payer
-  o Boolean signature
+  --> Doctor doctor
+}
+
+asset PatientNotification extends Prescription {
+  --> Patient user
+  --> Doctor doctor
+}
+
+asset IQVIADoctorNotification extends Prescription {
+  --> DoctorPrescription docPresc
+  --> PatientNotification patNoti
+}
+
+/*abstract asset PayerNotification identified by notificationId {
+  o String notificationId
+  --> Patient user
+  o Double reqMoney
+  o Double recvMoney
   o String comments
 }
 
-asset medicine identified by medicineId {
-  o String medicineId
-  --> Patient user
-  o Double medPrince
-  o String description
-}*/
-
-asset moneyAllotedToUser identified by requestId {
-  o String requestId
-  --> Patient user
-  --> IQVIA netadmin
-  --> Charity payer
-  --> Doctor doctor
-  o DateTime requestTime
-  o TransferType currentStatus 
-  o Double userAllotedMoney
+asset PharmaNotification extends PayerNotification {
 }
 
-asset payerMoney identified by payedId {
-  o String payedId
-  --> Charity payer
-  o Double payerMoneyInitiated
-  //o DateTime requestTime
-  o TransferType currentStatus 
+asset CharityNotification extends PayerNotification {
+}*/
+
+asset PayerNotification identified by notificationId {
+  o String notificationId
+  --> IQVIADoctorNotification userDetail
+  --> Pharma[] donatedPharma optional
+  --> Charity[] donatedCharity optional
+  o Double reqMoney
+  o Double recvMoney
+  o String comments
+}
+
+asset IQVIAPharmaNotification identified by notificationId {
+  o String notificationId
+  --> IQVIADoctorNotification userDetail
+  --> Pharma pharma
+  o Double investedMoney
+}
+
+asset IQVIACharityNotification identified by notificationId {
+  o String notificationId
+  --> IQVIADoctorNotification userDetail
+  --> Charity charity
+  o Double investedMoney
 }
 
 enum TransferType {
@@ -101,33 +128,62 @@ enum TransferType {
   o FAILED
 }
 
+enum DeceseType {
+  o TYPE1
+  o TYPE2
+  o TYPE3
+  o TYPE4
+}
+
 transaction SampleTransaction {
-  --> moneyAllotedToUser asset
+  --> PatientNotification asset
   o String newValue
 }
 
-transaction AddUserToChain {
+transaction AddDoctorPrescription {
+  o String prescriptionId
+  --> Patient user
+  --> Doctor doctor
+  --> Medicine medUsed
+  o TransferType TransferStatus
+  o DeceseType type
+  o String comments
 }
 
-transaction AddPayerToChain {
-  o String email
-  o String firstName
-  o String lastName
-  o String password
-  o Address address
-  o Double transferBalance
+transaction SignPatientPrescription {
+  --> PatientNotification patAsset
 }
 
-transaction AllotMoneyToUser {
-  --> moneyAllotedToUser userAsset
-  o Double newValue
+transaction SignDoctorPrescription {
+  --> PatientNotification patAsset
+  --> DoctorPrescription docAsset
 }
 
-transaction AllotMoneyToPayer {
-  --> payerMoney payerAsset
-  o Double newValue
+transaction SignIqviaPrescription {
+  //--> PatientNotification patAsset
+  //--> DoctorPrescription docAsset 
+  --> IQVIADoctorNotification iqviaDocAsset
+  o Double moneyPatientWanted
 }
 
-transaction TestTransaction {
-  --> payerMoney payerAsset
+transaction  DonateMoneyFromCharity {
+  --> PayerNotification charityMoney
+  --> Charity charity
+  o Double moneyDonation
+}
+
+transaction  DonateMoneyFromPharma {
+  --> PayerNotification pharmaMoney
+  --> Pharma pharma
+  o Double moneyDonation
+}
+
+transaction ConfirmMoneyFromCharity {
+  --> PayerNotification charityMoney
+  --> IQVIACharityNotification charityNoti
+}
+
+transaction ConfirmMoneyFromPharma {
+  --> PayerNotification pharmaMoney
+  --> IQVIAPharmaNotification pharmaNoti
 }
