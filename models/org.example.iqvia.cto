@@ -63,14 +63,8 @@ abstract asset Prescription identified by prescriptionId {
   o String prescriptionId
   --> Medicine medicineUsed
   o TransferType TransferStatus
-  o DeceseType type
   o String comments
   //o DateTime transferTime
-}
-
-asset DoctorPrescription extends Prescription {
-  --> Patient user
-  --> Doctor doctor
 }
 
 asset PatientNotification extends Prescription {
@@ -78,30 +72,27 @@ asset PatientNotification extends Prescription {
   --> Doctor doctor
 }
 
+asset DoctorPrescription extends Prescription {
+  --> Patient user
+  --> Doctor doctor
+  --> PatientNotification patientNoti
+}
+
 asset IQVIADoctorNotification extends Prescription {
   --> DoctorPrescription docPresc
   --> PatientNotification patNoti
 }
 
-/*abstract asset PayerNotification identified by notificationId {
-  o String notificationId
-  --> Patient user
-  o Double reqMoney
-  o Double recvMoney
-  o String comments
+concept DonateDetail {
+  o Double InvestedMoney
+  --> Pharma donatedPharma optional
+  --> Charity donatedCharity optional
 }
-
-asset PharmaNotification extends PayerNotification {
-}
-
-asset CharityNotification extends PayerNotification {
-}*/
 
 asset PayerNotification identified by notificationId {
   o String notificationId
   --> IQVIADoctorNotification userDetail
-  --> Pharma[] donatedPharma optional
-  --> Charity[] donatedCharity optional
+  o DonateDetail[] donateDetail optional
   o Double reqMoney
   o Double recvMoney
   o String comments
@@ -111,6 +102,7 @@ asset IQVIAPharmaNotification identified by notificationId {
   o String notificationId
   --> IQVIADoctorNotification userDetail
   --> Pharma pharma
+  --> PayerNotification payerNoti
   o Double investedMoney
 }
 
@@ -118,6 +110,7 @@ asset IQVIACharityNotification identified by notificationId {
   o String notificationId
   --> IQVIADoctorNotification userDetail
   --> Charity charity
+  --> PayerNotification payerNoti
   o Double investedMoney
 }
 
@@ -128,25 +121,16 @@ enum TransferType {
   o FAILED
 }
 
-enum DeceseType {
-  o TYPE1
-  o TYPE2
-  o TYPE3
-  o TYPE4
-}
-
 transaction SampleTransaction {
   --> PatientNotification asset
   o String newValue
 }
 
 transaction AddDoctorPrescription {
-  o String prescriptionId
   --> Patient user
   --> Doctor doctor
   --> Medicine medUsed
   o TransferType TransferStatus
-  o DeceseType type
   o String comments
 }
 
@@ -155,13 +139,10 @@ transaction SignPatientPrescription {
 }
 
 transaction SignDoctorPrescription {
-  --> PatientNotification patAsset
   --> DoctorPrescription docAsset
 }
 
 transaction SignIqviaPrescription {
-  //--> PatientNotification patAsset
-  //--> DoctorPrescription docAsset 
   --> IQVIADoctorNotification iqviaDocAsset
   o Double moneyPatientWanted
 }
@@ -179,11 +160,11 @@ transaction  DonateMoneyFromPharma {
 }
 
 transaction ConfirmMoneyFromCharity {
-  --> PayerNotification charityMoney
+  //--> PayerNotification charityMoney
   --> IQVIACharityNotification charityNoti
 }
 
 transaction ConfirmMoneyFromPharma {
-  --> PayerNotification pharmaMoney
+  //--> PayerNotification pharmaMoney
   --> IQVIAPharmaNotification pharmaNoti
 }
