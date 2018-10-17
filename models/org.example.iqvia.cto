@@ -34,8 +34,16 @@ concept Address {
   o String zip optional
 }
 
+concept Insurance {
+  o Boolean InsuranceStatus default = false
+  o Integer InsuranceClaimPercentage default = 0 range = [0,100]
+  o String InsuranceCompanyName default = ""
+  o String InsuranceFile default = "" optional
+}
+
 participant Patient extends Business {
   o Double accountBalance
+  o Insurance patientInsurance optional
 }
 
 participant IQVIA extends Business {
@@ -61,7 +69,7 @@ asset Medicine identified by MedId {
 
 abstract asset Prescription identified by prescriptionId {
   o String prescriptionId
-  --> Medicine medicineUsed
+  --> Medicine[] medicineUsed
   o TransferType TransferStatus
   o String comments
   //o DateTime transferTime
@@ -129,7 +137,7 @@ transaction SampleTransaction {
 transaction AddDoctorPrescription {
   --> Patient user
   --> Doctor doctor
-  --> Medicine medUsed
+  --> Medicine[] medUsed
   o TransferType TransferStatus
   o String comments
 }
@@ -160,11 +168,9 @@ transaction  DonateMoneyFromPharma {
 }
 
 transaction ConfirmMoneyFromCharity {
-  //--> PayerNotification charityMoney
   --> IQVIACharityNotification charityNoti
 }
 
 transaction ConfirmMoneyFromPharma {
-  //--> PayerNotification pharmaMoney
   --> IQVIAPharmaNotification pharmaNoti
 }

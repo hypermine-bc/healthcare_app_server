@@ -392,6 +392,14 @@ rule pharmaCanotDo_9 {
    action: DENY
 }
 
+rule defaultUserHistoryRule {
+   description: "Pharma canot do anything on IQVIA Notification asset"
+   participant: "org.example.iqvia.Patient"
+   operation: ALL
+   resource: "org.hyperledger.composer.system.HistorianRecord"
+   action: DENY
+}
+
 /**
 * Defalt access control file
 */
