@@ -1,4 +1,4 @@
-/*
+ /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,7 @@ concept Address {
   o String zip optional
 }
 
-concept Insurance {
+concept InsuranceStatus {
   o Boolean InsuranceStatus default = false
   o Integer InsuranceClaimPercentage default = 0 range = [0,100]
   o String InsuranceCompanyName default = ""
@@ -42,17 +42,24 @@ concept Insurance {
 }
 
 participant Patient extends Business {
-  o Double accountBalance
-  o Insurance patientInsurance optional
+  o InsuranceStatus patientInsurance optional
 }
 
 participant IQVIA extends Business {
+}
+  
+participant Insurance extends Business {
 }
 
 participant Doctor extends Business {
 }
 
 participant Pharma extends Business {
+  o Double accountBalance
+}
+  
+participant Distributor extends Business {
+  o Double accountBalance
 }
 
 participant Charity extends Business {
@@ -92,34 +99,60 @@ asset IQVIADoctorNotification extends Prescription {
 }
 
 concept DonateDetail {
-  o Double InvestedMoney
+  o Double InvestedMoney optional
+  o Double percentageCovered
   --> Pharma donatedPharma optional
   --> Charity donatedCharity optional
+  --> Insurance donateInsurance optional
 }
 
-asset PayerNotification identified by notificationId {
+abstract asset PayerNotification identified by notificationId {
   o String notificationId
   --> IQVIADoctorNotification userDetail
   o DonateDetail[] donateDetail optional
   o Double reqMoney
-  o Double recvMoney
+  o Integer percentageCoverd range = [0,100]
+  o TransferType TransferStatus
+  
   o String comments
 }
 
-asset IQVIAPharmaNotification identified by notificationId {
-  o String notificationId
-  --> IQVIADoctorNotification userDetail
-  --> Pharma pharma
-  --> PayerNotification payerNoti
-  o Double investedMoney
+asset InsuranceNotification extends PayerNotification {
+}
+  
+asset PharmaNotification extends PayerNotification {
+  --> InsuranceNotification insuranceNoti optional
 }
 
-asset IQVIACharityNotification identified by notificationId {
+asset CharityNotification extends PayerNotification {
+  --> InsuranceNotification insuranceNoti optional
+  --> PharmaNotification pharmaNoti
+}
+
+asset IQVIAPayerNotification identified by notificationId {
   o String notificationId
   --> IQVIADoctorNotification userDetail
-  --> Charity charity
-  --> PayerNotification payerNoti
-  o Double investedMoney
+  o Double reqMoney
+  o DonateDetail[] donateDetail optional
+  o TransferType TransferStatus
+}
+ 
+asset PharmaTokenReleaseNotification identified by tokenId {
+  o String tokenId
+  --> IQVIADoctorNotification userDetail
+  --> Pharma pharma
+  o Double tokenBalance
+  o TransferType TransferStatus
+}
+  
+asset DistributorNotification identified by distributerId {
+  o String distributerId
+  --> Patient patient
+  --> Medicine[] medUsed
+  --> Distributor distributor
+  o Double tokenBalance
+  o String ProofOfSale optional
+  o TransferType TransferStatus
 }
 
 enum TransferType {
@@ -156,21 +189,31 @@ transaction SignIqviaPrescription {
 }
 
 transaction  DonateMoneyFromCharity {
-  --> PayerNotification charityMoney
+  --> CharityNotification charityNoti
   --> Charity charity
-  o Double moneyDonation
+  o Integer percentage range = [0,100]
 }
 
 transaction  DonateMoneyFromPharma {
-  --> PayerNotification pharmaMoney
+  --> PharmaNotification pharmaNoti
   --> Pharma pharma
-  o Double moneyDonation
+  o Integer percentage range = [0,100]
 }
 
-transaction ConfirmMoneyFromCharity {
-  --> IQVIACharityNotification charityNoti
+transaction  DonateMoneyFromInsurance {
+  --> InsuranceNotification insuranceNoti
+  --> Insurance insuranceCompany
+  o Integer percentage range = [0,100]
 }
+  
+transaction  ConfirmPayerNotification {
+  --> IQVIAPayerNotification payerNoti
+  o Integer percentage range = [0,100]
+  --> Pharma pharma
+}  
 
-transaction ConfirmMoneyFromPharma {
-  --> IQVIAPharmaNotification pharmaNoti
-}
+transaction  ReleaseTokenToDistributor {
+  --> PharmaTokenReleaseNotification pharmaNoti
+  o Integer percentage range = [0,100]
+  --> Distributor distributor
+}  
