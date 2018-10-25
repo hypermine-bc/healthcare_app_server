@@ -52,6 +52,38 @@ rule patientCanotDo_5 {
 }
 
 rule patientCanotDo_6 {
+  description: "User canot do to any participant insurance"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.Insurance"
+  action: DENY
+}
+
+rule patientCanotDo_7 {
+  description: "User canot do to any participant pharma"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.Pharma"
+  action: DENY
+}
+
+rule patientCanotDo_8 {
+  description: "User canot do to any participant distributor"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.Distributor"
+  action: DENY
+}
+
+rule patientCanotDo_9 {
+  description: "User canot do to any participant charity"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.Charity"
+  action: DENY
+}
+
+rule patientCanotDo_10 {
   description: "Patient canot do to asset"
   participant: "org.example.iqvia.Patient"
   operation: ALL
@@ -59,7 +91,7 @@ rule patientCanotDo_6 {
   action: DENY
 }
 
-rule patientCanotDo_9 {
+rule patientCanotDo_11 {
   description: "Patient canot do to asset"
   participant: "org.example.iqvia.Patient"
   operation: ALL
@@ -67,11 +99,43 @@ rule patientCanotDo_9 {
   action: DENY
 }
 
-rule patientCanotDo_10 {
+rule patientCanotDo_12 {
   description: "Patient canot do to asset Medicine"
   participant: "org.example.iqvia.Patient"
   operation: ALL
   resource: "org.example.iqvia.Medicine"
+  action: DENY
+}
+
+rule patientCanotDo_13 {
+  description: "Patient canot do to asset Medicine"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.PayerNotification"
+  action: DENY
+}
+
+rule patientCanotDo_14 {
+  description: "Patient canot do to asset Medicine"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.IQVIAPayerNotification"
+  action: DENY
+}
+
+rule patientCanotDo_15 {
+  description: "Patient canot do to asset Medicine"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.PharmaTokenReleaseNotification"
+  action: DENY
+}
+
+rule patientCanotDo_16 {
+  description: "Patient canot do to asset Medicine"
+  participant: "org.example.iqvia.Patient"
+  operation: ALL
+  resource: "org.example.iqvia.DistributorNotification"
   action: DENY
 }
 
@@ -134,6 +198,38 @@ rule doctorCanotDo_3 {
 }
 
 rule doctorCanotDo_4 {
+  description: "Doctor canot do to participant Admin"
+  participant: "org.example.iqvia.Doctor"
+  operation: DELETE, READ, UPDATE
+  resource: "org.example.iqvia.Insurance"
+  action: DENY
+}
+
+rule doctorCanotDo_5 {
+  description: "Doctor canot do to participant Admin"
+  participant: "org.example.iqvia.Doctor"
+  operation: DELETE, READ, UPDATE
+  resource: "org.example.iqvia.Pharma"
+  action: DENY
+}
+
+rule doctorCanotDo_6 {
+  description: "Doctor canot do to participant Admin"
+  participant: "org.example.iqvia.Doctor"
+  operation: DELETE, READ, UPDATE
+  resource: "org.example.iqvia.Distributor"
+  action: DENY
+}
+
+rule doctorCanotDo_7 {
+  description: "Doctor canot do to participant Admin"
+  participant: "org.example.iqvia.Doctor"
+  operation: DELETE, READ, UPDATE
+  resource: "org.example.iqvia.Charity"
+  action: DENY
+}
+
+rule doctorCanotDo_8 {
   description: "Doctor canot do to asset"
   participant: "org.example.iqvia.Doctor"
   operation: UPDATE, DELETE, READ
@@ -141,7 +237,7 @@ rule doctorCanotDo_4 {
   action: DENY
 }
 
-rule doctorCanotDo_5 {
+rule doctorCanotDo_9 {
   description: "Doctor canot do to asset"
   participant: "org.example.iqvia.Doctor"
   operation: ALL
@@ -149,11 +245,43 @@ rule doctorCanotDo_5 {
   action: DENY
 }
 
-rule doctorCanotDo_8 {
+rule doctorCanotDo_10 {
   description: "Doctor canot do to asset"
   participant: "org.example.iqvia.Doctor"
   operation: CREATE, DELETE, UPDATE
   resource: "org.example.iqvia.Medicine"
+  action: DENY
+}
+
+rule doctorCanotDo_11 {
+  description: "Doctor canot do to asset"
+  participant: "org.example.iqvia.Doctor"
+  operation: CREATE, DELETE, UPDATE
+  resource: "org.example.iqvia.PayerNotification"
+  action: DENY
+}
+
+rule doctorCanotDo_12 {
+  description: "Doctor canot do to asset"
+  participant: "org.example.iqvia.Doctor"
+  operation: CREATE, DELETE, UPDATE
+  resource: "org.example.iqvia.IQVIAPayerNotification"
+  action: DENY
+}
+
+rule doctorCanotDo_13 {
+  description: "Doctor canot do to asset"
+  participant: "org.example.iqvia.Doctor"
+  operation: CREATE, DELETE, UPDATE
+  resource: "org.example.iqvia.PharmaTokenReleaseNotification"
+  action: DENY
+}
+
+rule doctorCanotDo_14 {
+  description: "Doctor canot do to asset"
+  participant: "org.example.iqvia.Doctor"
+  operation: CREATE, DELETE, UPDATE
+  resource: "org.example.iqvia.DistributorNotification"
   action: DENY
 }
 
@@ -170,6 +298,46 @@ rule adminCanotDo_1 {
   participant: "org.example.iqvia.IQVIA"
   operation: CREATE, DELETE
   resource: "org.example.iqvia.PatientNotification"
+  action: DENY
+}
+
+rule adminCanotDo_2 {
+  description: "Admin canot do to the asset"
+  participant: "org.example.iqvia.IQVIA"
+  operation: DELETE, UPDATE
+  resource: "org.example.iqvia.InsuranceNotification"
+  action: DENY
+}
+
+rule adminCanotDo_3 {
+  description: "Admin canot do to the asset"
+  participant: "org.example.iqvia.IQVIA"
+  operation: DELETE, UPDATE
+  resource: "org.example.iqvia.PharmaNotification"
+  action: DENY
+}
+
+rule adminCanotDo_4 {
+  description: "Admin canot do to the asset"
+  participant: "org.example.iqvia.IQVIA"
+  operation: DELETE, UPDATE, CREATE
+  resource: "org.example.iqvia.CharityNotification"
+  action: DENY
+}
+
+rule adminCanotDo_5 {
+  description: "Admin canot do to the asset"
+  participant: "org.example.iqvia.IQVIA"
+  operation: DELETE, UPDATE
+  resource: "org.example.iqvia.PharmaTokenReleaseNotification"
+  action: DENY
+}
+
+rule adminCanotDo_6 {
+  description: "Admin canot do to the asset"
+  participant: "org.example.iqvia.IQVIA"
+  operation: DELETE, UPDATE
+  resource: "org.example.iqvia.DistributorNotification"
   action: DENY
 }
 
@@ -206,15 +374,31 @@ rule charityCanotDo_3 {
    action: DENY
 }
 
-rule charityCanotDo_4 {
-   description: "Charity canot do anything on doctorprescription asset"
+rule charityCanotDo_5 {
+   description: "Charity canot add doctor participant to the network"
    participant: "org.example.iqvia.Charity"
    operation: ALL
+   resource: "org.example.iqvia.Insurance"
+   action: DENY
+}
+
+rule charityCanotDo_6 {
+   description: "Charity canot add doctor participant to the network"
+   participant: "org.example.iqvia.Charity"
+   operation: ALL
+   resource: "org.example.iqvia.Distributor"
+   action: DENY
+}
+
+rule charityCanotDo_7 {
+   description: "Charity canot do anything on doctorprescription asset"
+   participant: "org.example.iqvia.Charity"
+   operation: CREATE, DELETE, UPDATE
    resource: "org.example.iqvia.DoctorPrescription"
    action: DENY
 }
 
-rule charityCanotDo_5 {
+rule charityCanotDo_8 {
    description: "Charity canot do anything on patientNotification asset"
    participant: "org.example.iqvia.Charity"
    operation: ALL
@@ -222,27 +406,59 @@ rule charityCanotDo_5 {
    action: DENY
 }
 
-rule charityCanotDo_6 {
+rule charityCanotDo_9 {
    description: "Charity canot do anything on IQVIA Notification asset"
    participant: "org.example.iqvia.Charity"
-   operation: ALL
+   operation: CREATE, UPDATE, DELETE
    resource: "org.example.iqvia.IQVIADoctorNotification"
    action: DENY
 }
 
-rule charityCanotDo_7 {
+rule charityCanotDo_10 {
    description: "Charity canot do anything on Payer Notification asset"
    participant: "org.example.iqvia.Charity"
-   operation: CREATE, DELETE, UPDATE
-   resource: "org.example.iqvia.PayerNotification"
+   operation: ALL
+   resource: "org.example.iqvia.PharmaTokenReleaseNotification"
    action: DENY
 }
 
-rule charityCanotDo_9 {
+rule charityCanotDo_11 {
+   description: "Charity canot do anything on Payer Notification asset"
+   participant: "org.example.iqvia.Charity"
+   operation: ALL
+   resource: "org.example.iqvia.DistributorNotification"
+   action: DENY
+}
+
+rule charityCanotDo_12 {
+   description: "Charity canot do anything on Payer Notification asset"
+   participant: "org.example.iqvia.Charity"
+   operation: CREATE, DELETE, UPDATE
+   resource: "org.example.iqvia.PharmaNotification"
+   action: DENY
+}
+
+rule charityCanotDo_13 {
+   description: "Charity canot do anything on Payer Notification asset"
+   participant: "org.example.iqvia.Charity"
+   operation: CREATE, DELETE, UPDATE
+   resource: "org.example.iqvia.InsuranceNotification"
+   action: DENY
+}
+
+rule charityCanotDo_14 {
    description: "Charity canot do anything on Medicine asset"
    participant: "org.example.iqvia.Charity"
    operation: ALL
    resource: "org.example.iqvia.Medicine"
+   action: DENY
+}
+
+rule charityCanotDo_15 {
+   description: "Charity canot do anything on Medicine asset"
+   participant: "org.example.iqvia.Charity"
+   operation: DELETE
+   resource: "org.example.iqvia.CharityNotification"
    action: DENY
 }
 
@@ -265,7 +481,7 @@ rule pharmaCanotDo_1 {
 rule pharmaCanotDo_2 {
    description: "Pharma canot add patient participant to the network"
    participant: "org.example.iqvia.Pharma"
-   operation: ALL
+   operation: CREATE, UPDATE, DELETE
    resource: "org.example.iqvia.Patient"
    action: DENY
 }
@@ -279,14 +495,30 @@ rule pharmaCanotDo_3 {
 }
 
 rule pharmaCanotDo_4 {
-   description: "Pharma canot do anything on doctorprescription asset"
+   description: "Pharma canot add doctor participant to the network"
    participant: "org.example.iqvia.Pharma"
    operation: ALL
-   resource: "org.example.iqvia.DoctorPrescription"
+   resource: "org.example.iqvia.Insurance"
    action: DENY
 }
 
 rule pharmaCanotDo_5 {
+   description: "Pharma canot add doctor participant to the network"
+   participant: "org.example.iqvia.Pharma"
+   operation: DELETE
+   resource: "org.example.iqvia.Distributor"
+   action: DENY
+}
+
+rule pharmaCanotDo_6 {
+   description: "Pharma canot do anything on doctorprescription asset"
+   participant: "org.example.iqvia.Pharma"
+   operation: CREATE, DELETE, UPDATE
+   resource: "org.example.iqvia.DoctorPrescription"
+   action: DENY
+}
+
+rule pharmaCanotDo_7 {
    description: "Pharma canot do anything on patientNotification asset"
    participant: "org.example.iqvia.Pharma"
    operation: ALL
@@ -294,21 +526,369 @@ rule pharmaCanotDo_5 {
    action: DENY
 }
 
-rule pharmaCanotDo_6 {
+rule pharmaCanotDo_8 {
    description: "Pharma canot do anything on IQVIA Notification asset"
    participant: "org.example.iqvia.Pharma"
-   operation: ALL
+   operation: CREATE, UPDATE, DELETE
    resource: "org.example.iqvia.IQVIADoctorNotification"
    action: DENY
 }
 
-rule pharmaCanotDo_7 {
+rule pharmaCanotDo_9 {
    description: "Pharma canot do on IQVIA Notification asset"
    participant: "org.example.iqvia.Pharma"
-   operation: CREATE, DELETE, UPDATE
-   resource: "org.example.iqvia.PayerNotification"
+   operation: DELETE, UPDATE, READ
+   resource: "org.example.iqvia.IQVIAPayerNotification"
    action: DENY
 }
+
+rule pharmaCanotDo_10 {
+   description: "Pharma canot do on IQVIA Notification asset"
+   participant: "org.example.iqvia.Pharma"
+   operation: DELETE, UPDATE, READ
+   resource: "org.example.iqvia.CharityNotification"
+   action: DENY
+}
+
+rule pharmaCanotDo_11 {
+   description: "Pharma canot do on IQVIA Notification asset"
+   participant: "org.example.iqvia.Pharma"
+   operation: DELETE, UPDATE
+   resource: "org.example.iqvia.InsuranceNotification"
+   action: DENY
+}
+
+rule pharmaCanotDo_12 {
+   description: "Pharma canot do on IQVIA Notification asset"
+   participant: "org.example.iqvia.Pharma"
+   operation: DELETE, UPDATE
+   resource: "org.example.iqvia.DistributorNotification"
+   action: DENY
+}
+
+rule pharmaCanotDo_13 {
+   description: "Pharma canot do on IQVIA Notification asset"
+   participant: "org.example.iqvia.Pharma"
+   operation: DELETE
+   resource: "org.example.iqvia.PharmaTokenReleaseNotification"
+   action: DENY
+}
+
+rule pharmaCanotDo_14 {
+   description: "Pharma canot do on IQVIA Notification asset"
+   participant: "org.example.iqvia.Pharma"
+   operation: DELETE
+   resource: "org.example.iqvia.PharmaNotification"
+   action: DENY
+}
+
+
+
+
+rule insuranceCanotDo {
+   description: "Insurance canot add iqvia admin participant to the network"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.IQVIA"
+   action: DENY
+}
+
+rule insuranceCanotDo_1 {
+   description: "Insurance canot add doctor participant to the network"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.Doctor"
+   action: DENY
+}
+
+rule insuranceCanotDo_2 {
+   description: "Insurance canot add patient participant to the network"
+   participant: "org.example.iqvia.Insurance"
+   operation: CREATE, UPDATE, DELETE
+   resource: "org.example.iqvia.Patient"
+   action: DENY
+}
+
+rule insuranceCanotDo_3 {
+   description: "Insurance canot add charity participant to the network"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.Charity"
+   action: DENY
+}
+
+rule insuranceCanotDo_4 {
+   description: "Insurance canot add pharma participant to the network"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.Pharma"
+   action: DENY
+}
+
+rule insuranceCanotDo_5 {
+   description: "Insurance canot add distributor participant to the network"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.Distributor"
+   action: DENY
+}
+
+rule insuranceCanotDo_6 {
+   description: "Insurance canot do anything on doctorprescription asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: CREATE, DELETE, UPDATE
+   resource: "org.example.iqvia.DoctorPrescription"
+   action: DENY
+}
+
+rule insuranceCanotDo_7 {
+   description: "Insurance canot do anything on patientNotification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.PatientNotification"
+   action: DENY
+}
+
+rule insuranceCanotDo_8 {
+   description: "Insurance canot do anything on IQVIA Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: CREATE, UPDATE, DELETE
+   resource: "org.example.iqvia.IQVIADoctorNotification"
+   action: DENY
+}
+
+rule insuranceCanotDo_9 {
+   description: "Insurance canot do on IQVIA Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: DELETE, UPDATE, READ
+   resource: "org.example.iqvia.IQVIAPayerNotification"
+   action: DENY
+}
+
+rule insuranceCanotDo_10 {
+   description: "Insurance canot do on Pharma Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: DELETE, UPDATE, READ
+   resource: "org.example.iqvia.PharmaNotification"
+   action: DENY
+}
+
+rule insuranceCanotDo_11 {
+   description: "Insurance canot do on Charity Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.CharityNotification"
+   action: DENY
+}
+
+rule insuranceCanotDo_12 {
+   description: "Insurance canot do on Pharam Relase Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.PharmaTokenReleaseNotification"
+   action: DENY
+}
+
+rule insuranceCanotDo_13 {
+   description: "Insurance canot do on Distributor Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.DistributorNotification"
+   action: DENY
+}
+
+rule insuranceCanotDo_14 {
+   description: "Insurance canot do on Distributor Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: ALL
+   resource: "org.example.iqvia.Medicine"
+   action: DENY
+}
+
+rule insuranceCanotDo_15 {
+   description: "Insurance canot do on Distributor Notification asset"
+   participant: "org.example.iqvia.Insurance"
+   operation: DELETE
+   resource: "org.example.iqvia.InsuranceNotification"
+   action: DENY
+}
+
+rule distributorCanotDo {
+   description: "Distributor canot add iqvia admin participant to the network"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.IQVIA"
+   action: DENY
+}
+
+rule distributorCanotDo_1 {
+   description: "Distributor canot add doctor participant to the network"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.Doctor"
+   action: DENY
+}
+
+rule distributorCanotDo_2 {
+   description: "Distributor canot add patient participant to the network"
+   participant: "org.example.iqvia.Distributor"
+   operation: CREATE, UPDATE, DELETE
+   resource: "org.example.iqvia.Patient"
+   action: DENY
+}
+
+rule distributorCanotDo_3 {
+   description: "Distributor canot add charity participant to the network"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.Charity"
+   action: DENY
+}
+
+rule distributorCanotDo_4 {
+   description: "Distributor canot add pharma participant to the network"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.Pharma"
+   action: DENY
+}
+
+rule distributorCanotDo_5 {
+   description: "Distributor canot add distributor participant to the network"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.Insurance"
+   action: DENY
+}
+
+rule distributorCanotDo_6 {
+   description: "Distributor canot do anything on doctorprescription asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.DoctorPrescription"
+   action: DENY
+}
+
+rule distributorCanotDo_7 {
+   description: "Distributor canot do anything on patientNotification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.PatientNotification"
+   action: DENY
+}
+
+rule distributorCanotDo_8 {
+   description: "Distributor canot do anything on IQVIA Notification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: CREATE, UPDATE, DELETE
+   resource: "org.example.iqvia.IQVIADoctorNotification"
+   action: DENY
+}
+
+rule distributorCanotDo_9 {
+   description: "Distributor canot do on IQVIA Notification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.IQVIAPayerNotification"
+   action: DENY
+}
+
+rule distributorCanotDo_10 {
+   description: "Distributor canot do on Pharma Notification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.PharmaNotification"
+   action: DENY
+}
+
+rule distributorCanotDo_11 {
+   description: "Distributor canot do on Charity Notification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.CharityNotification"
+   action: DENY
+}
+
+rule distributorCanotDo_12 {
+   description: "Distributor canot do on Pharam Relase Notification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.PharmaTokenReleaseNotification"
+   action: DENY
+}
+
+rule distributorCanotDo_13 {
+   description: "Distributor canot do on Insurance Notification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: ALL
+   resource: "org.example.iqvia.InsuranceNotification"
+   action: DENY
+}
+
+rule distributorCanotDo_14 {
+   description: "Distributor canot do on Insurance Notification asset"
+   participant: "org.example.iqvia.Distributor"
+   operation: DELETE
+   resource: "org.example.iqvia.DistributorNotification"
+   action: DENY
+}
+
+/* Histroian Permission */
+
+rule patientHistorian {
+   description: "Patient can do to the historian"
+   participant(p): "org.example.iqvia.Patient"
+   operation: ALL
+   resource(r): "org.hyperledger.composer.system.HistorianRecord"
+   condition: (r.participantInvoking.getIdentifier() != p.getIdentifier())
+   action: DENY
+}
+
+rule doctorHistorian {
+   description: "Doctor can do to the historian"
+   participant(p): "org.example.iqvia.Doctor"
+   operation: ALL
+   resource(r): "org.hyperledger.composer.system.HistorianRecord"
+   condition: (r.participantInvoking.getIdentifier() != p.getIdentifier())
+   action: DENY
+}
+
+rule charityHistorian {
+   description: "Charity can do to the historian"
+   participant(p): "org.example.iqvia.Charity"
+   operation: ALL
+   resource(r): "org.hyperledger.composer.system.HistorianRecord"
+   condition: (r.participantInvoking.getIdentifier() != p.getIdentifier())
+   action: DENY
+}
+
+rule pharmaHistorian {
+   description: "Pharma can do to the historian"
+   participant(p): "org.example.iqvia.Pharma"
+   operation: ALL
+   resource(r): "org.hyperledger.composer.system.HistorianRecord"
+   condition: (r.participantInvoking.getIdentifier() != p.getIdentifier())
+   action: DENY
+}
+
+rule distributorHistorian {
+   description: "Distributor can do to the historian"
+   participant(p): "org.example.iqvia.Distributor"
+   operation: ALL
+   resource(r): "org.hyperledger.composer.system.HistorianRecord"
+   condition: (r.participantInvoking.getIdentifier() != p.getIdentifier())
+   action: DENY
+}
+
+rule insuranceHistorian {
+   description: "Insurance can do to the historian"
+   participant(p): "org.example.iqvia.Insurance"
+   operation: ALL
+   resource(r): "org.hyperledger.composer.system.HistorianRecord"
+   condition: (r.participantInvoking.getIdentifier() != p.getIdentifier())
+   action: DENY
+}
+
 
 /**
 * Defalt access control file

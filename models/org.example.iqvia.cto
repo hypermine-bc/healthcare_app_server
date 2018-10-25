@@ -60,6 +60,7 @@ participant Pharma extends Business {
   
 participant Distributor extends Business {
   o Double accountBalance
+  o String proofOfSale optional
 }
 
 participant Charity extends Business {
