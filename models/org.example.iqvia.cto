@@ -43,6 +43,9 @@ concept InsuranceStatus {
 
 participant Patient extends Business {
   o InsuranceStatus patientInsurance optional
+  o String dob default="01/01/0001" regex=/((?:0[1-9])|(?:1[0-2]))\/((?:0[0-9])|(?:[1-2][0-9])|(?:3[0-1]))\/(\d{4})/
+  o String maritalStatus
+  o String sex
 }
 
 participant IQVIA extends Business {
@@ -52,6 +55,9 @@ participant Insurance extends Business {
 }
 
 participant Doctor extends Business {
+  o String dob default="01/01/0001" regex=/((?:0[1-9])|(?:1[0-2]))\/((?:0[0-9])|(?:[1-2][0-9])|(?:3[0-1]))\/(\d{4})/
+  o String maritalStatus
+  o String sex
 }
 
 participant Pharma extends Business {
@@ -73,6 +79,7 @@ asset Medicine identified by MedId {
   o String MedName
   o String MedDescription
   o Double MedPrice
+  o String data optional
 }
 
 abstract asset Prescription identified by prescriptionId {
@@ -80,6 +87,7 @@ abstract asset Prescription identified by prescriptionId {
   --> Medicine[] medicineUsed
   o TransferType TransferStatus
   o String comments
+  o String data optional
   //o DateTime transferTime
 }
 
@@ -116,6 +124,7 @@ abstract asset PayerNotification identified by notificationId {
   o TransferType TransferStatus
   
   o String comments
+  o String data optional
 }
 
 asset InsuranceNotification extends PayerNotification {
@@ -136,6 +145,7 @@ asset IQVIAPayerNotification identified by notificationId {
   o Double reqMoney
   o DonateDetail[] donateDetail optional
   o TransferType TransferStatus
+  o String data optional
 }
  
 asset PharmaTokenReleaseNotification identified by tokenId {
@@ -144,6 +154,7 @@ asset PharmaTokenReleaseNotification identified by tokenId {
   --> Pharma pharma
   o Double tokenBalance
   o TransferType TransferStatus
+  o String data optional
 }
   
 asset DistributorNotification identified by distributerId {
@@ -154,6 +165,7 @@ asset DistributorNotification identified by distributerId {
   o Double tokenBalance
   o String ProofOfSale optional
   o TransferType TransferStatus
+  o String data optional
 }
 
 enum TransferType {
